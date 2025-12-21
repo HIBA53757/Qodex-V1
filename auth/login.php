@@ -1,18 +1,10 @@
 <?php
-session_start(); // Start session for user login
+ //connection
+require_once '../config/database.php';
 
-// Database connection
-$db_server = "localhost";
-$db_user = "root";
-$db_pass = "";
-$db_name = "qodex_v1";
-$conn = mysqli_connect($db_server, $db_user, $db_pass, $db_name);
 
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+session_start(); 
 
-// Handle login form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
@@ -20,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (empty($email) || empty($password)) {
         $message = "Veuillez remplir tous les champs.";
     } else {
-        // Prepare and execute query
+     
         $stmt = mysqli_prepare($conn, "SELECT id_user, nom_user, password_hash, role FROM USERS WHERE email = ?");
         mysqli_stmt_bind_param($stmt, "s", $email);
         mysqli_stmt_execute($stmt);
@@ -30,14 +22,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             mysqli_stmt_bind_result($stmt, $id_user, $nom_user, $hashedPassword, $role);
             mysqli_stmt_fetch($stmt);
 
-            // Verify password
+           
             if (password_verify($password, $hashedPassword)) {
-                // Set session variables
-                $_SESSION['id_user'] = $id_user;
+                   $_SESSION['id_user'] = $id_user;
                 $_SESSION['nom_user'] = $nom_user;
                 $_SESSION['role'] = $role;
-
-                // Redirect to dashboard
                 header("Location:  http://localhost/Qodex_v1/enseignant/dashboard.php");
                 exit();
             } else {
@@ -54,14 +43,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <?php
 $page_title = 'Connexion';
-$auth_page = true; // Hide common navbar
+$auth_page = true; 
 include '../includes/header.php';
 ?>
 
 <div class="auth-container">
     <h2>Connexion</h2>
 
-    <!-- Display error message -->
     <?php if(isset($message)) : ?>
         <p style="color:red; text-align:center; margin-bottom:15px;"><?php echo $message; ?></p>
     <?php endif; ?>

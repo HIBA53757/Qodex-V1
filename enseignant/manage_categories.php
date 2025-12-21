@@ -2,7 +2,6 @@
 require_once '../config/database.php';
 session_start();
 
-// SECURITY CHECK
 if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'enseignant') {
     header("Location: ../auth/login.php");
     exit();
@@ -10,7 +9,6 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'enseignant') {
 
 $user_id = $_SESSION['id_user'];
 
-// --- 1. ACTION: ADD CATEGORY ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     $name = htmlspecialchars($_POST['name']);
     $desc = htmlspecialchars($_POST['description']);
@@ -22,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     exit();
 }
 
-// --- 2. ACTION: DELETE CATEGORY ---
 if (isset($_GET['delete_cat_id'])) {
     $id_to_delete = (int)$_GET['delete_cat_id'];
     $stmt = mysqli_prepare($conn, "DELETE FROM CATEGORY WHERE id_category = ? AND created_by = ?");
@@ -32,7 +29,6 @@ if (isset($_GET['delete_cat_id'])) {
     exit();
 }
 
-// --- 3. DATA FETCHING ---
 $categories_query = mysqli_query($conn, "SELECT * FROM CATEGORY");
 
 $page_title = 'Gestion des Catégories';
@@ -98,7 +94,6 @@ include '../includes/header.php';
 <?php include '../includes/footer.php'; ?>
 
 <script>
-// Le script JS reste identique
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById("categoryModal");
     const openBtn = document.getElementById("openModalBtn"); 
